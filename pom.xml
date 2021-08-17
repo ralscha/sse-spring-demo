@@ -9,7 +9,7 @@
 	<name>ssespring</name>
 
 	<properties>
-		<spring.version>5.3.8</spring.version>
+		<spring.version>5.3.9</spring.version>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
 
