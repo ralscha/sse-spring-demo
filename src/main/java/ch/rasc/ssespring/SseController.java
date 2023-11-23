@@ -1,6 +1,6 @@
 package ch.rasc.ssespring;
 
-import javax.servlet.http.HttpServletResponse;
+
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import ch.rasc.sse.eventbus.SseEvent;
 import ch.rasc.sse.eventbus.SseEventBus;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @CrossOrigin
