@@ -9,7 +9,7 @@
 	<name>ssespring</name>
 
 	<properties>
-		<spring.version>6.1.13</spring.version>
+		<spring.version>6.1.14</spring.version>
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
