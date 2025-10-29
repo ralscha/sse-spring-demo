@@ -9,7 +9,7 @@
 	<name>ssespring</name>
 
 	<properties>
-		<spring.version>6.2.6</spring.version>
+		<spring.version>6.2.12</spring.version>
 		<java.version>25</java.version>
 	</properties>
 	<dependencies>
@@ -41,7 +41,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.5.0</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
