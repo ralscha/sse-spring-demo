@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SSE Spring Demo</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f7f9;
+      color: #20242a;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    section {
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      border: 1px solid #d9dee7;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 18px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    button {
+      font: inherit;
+    }
+
+    input {
+      min-width: 0;
+      border: 1px solid #b9c1cf;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 11px 14px;
+      color: #ffffff;
+      background: #2364aa;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #596579;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #8a94a6;
+    }
+
+    .dot.connected {
+      background: #238636;
+    }
+
+    .dot.error {
+      background: #c93c37;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    pre {
+      min-height: 120px;
+      max-height: 320px;
+      overflow: auto;
+      margin: 0;
+      border-radius: 6px;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 720px) {
+      form,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SSE Spring Demo</h1>
+
+    <section class="panel">
+      <form id="connect-form">
+        <label>
+          Client id
+          <input id="client-id" name="clientId" value="demo-client" autocomplete="off" required>
+        </label>
+        <button id="connect-button" type="submit">Connect</button>
+        <button id="disconnect-button" class="secondary" type="button" disabled>Disconnect</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="status">
+        <span id="status-dot" class="dot"></span>
+        <span id="status-text">Disconnected</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>message</h2>
+        <pre id="message-output">Waiting for data...</pre>
+      </article>
+      <article class="panel">
+        <h2>dto</h2>
+        <pre id="dto-output">Waiting for data...</pre>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector('#connect-form');
+    const clientIdInput = document.querySelector('#client-id');
+    const connectButton = document.querySelector('#connect-button');
+    const disconnectButton = document.querySelector('#disconnect-button');
+    const statusDot = document.querySelector('#status-dot');
+    const statusText = document.querySelector('#status-text');
+    const messageOutput = document.querySelector('#message-output');
+    const dtoOutput = document.querySelector('#dto-output');
+
+    let source;
+
+    function setStatus(text, state) {
+      statusText.textContent = text;
+      statusDot.className = `dot ${state || ''}`.trim();
+    }
+
+    function formatEvent(event) {
+      try {
+        return JSON.stringify(JSON.parse(event.data), null, 2);
+      }
+      catch (_) {
+        return event.data;
+      }
+    }
+
+    function disconnect() {
+      if (source) {
+        source.close();
+        source = undefined;
+      }
+      connectButton.disabled = false;
+      disconnectButton.disabled = true;
+      setStatus('Disconnected');
+    }
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      disconnect();
+
+      const clientId = encodeURIComponent(clientIdInput.value.trim());
+      source = new EventSource(`/register/${clientId}`);
+
+      connectButton.disabled = true;
+      disconnectButton.disabled = false;
+      setStatus('Connecting...');
+
+      source.onopen = () => setStatus('Connected', 'connected');
+      source.onerror = () => setStatus('Connection error or reconnecting...', 'error');
+      source.onmessage = event => {
+        messageOutput.textContent = formatEvent(event);
+      };
+      source.addEventListener('dto', event => {
+        dtoOutput.textContent = formatEvent(event);
+      });
+    });
+
+    disconnectButton.addEventListener('click', disconnect);
+  </script>
+</body>
+</html>

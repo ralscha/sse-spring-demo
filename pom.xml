@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.6</version>
-    <relativePath></relativePath>
+    <version>4.1.0</version>
+    <relativePath/>
   </parent>
 
   <groupId>com.rasc</groupId>
@@ -28,6 +28,12 @@
       <groupId>ch.rasc</groupId>
       <artifactId>sse-eventbus</artifactId>
       <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <version>2.12.1</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
