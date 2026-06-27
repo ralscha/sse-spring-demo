@@ -211,7 +211,14 @@
       event.preventDefault();
       disconnect();
 
-      const clientId = encodeURIComponent(clientIdInput.value.trim());
+      const trimmedClientId = clientIdInput.value.trim();
+      if (!trimmedClientId) {
+        clientIdInput.focus();
+        setStatus('Enter a client id', 'error');
+        return;
+      }
+
+      const clientId = encodeURIComponent(trimmedClientId);
       source = new EventSource(`/register/${clientId}`);
 
       connectButton.disabled = true;
